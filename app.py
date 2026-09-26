@@ -15,8 +15,8 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 # Reuse everything we already built in agent.py
-from agent import (MODEL, SYSTEM_PROMPT, friendly_error, load_schema,
-                   mcp_tools_to_gemini, run_agent)
+from agent import (MODEL, SYSTEM_PROMPT, friendly_error, is_daily_limit,
+                   load_schema, mcp_tools_to_gemini, run_agent)
 
 SERVER_PATH = Path(__file__).parent / "server.py"
 EXAMPLES = [
@@ -27,6 +27,10 @@ EXAMPLES = [
     "Visualize customers by city",
 ]
 
+# Public demo protection: max questions per visit (0 = unlimited, for local use).
+# Set DEMO_QUESTION_LIMIT in the deployment's secrets, not in your local .env.
+QUESTION_LIMIT = int(os.getenv("DEMO_QUESTION_LIMIT", "0"))
+
 st.set_page_config(page_title="Data Analyst Agent", page_icon="📊")
 
 
@@ -34,6 +38,7 @@ st.set_page_config(page_title="Data Analyst Agent", page_icon="📊")
 if "messages" not in st.session_state:
     st.session_state.messages = []  # what we show on screen
     st.session_state.history = []   # what Gemini remembers (agent memory)
+    st.session_state.asked = 0      # questions asked this visit (for the demo limit)
 
 api_key = os.getenv("GEMINI_API_KEY")  # agent.py already loaded .env
 if not api_key:
@@ -82,6 +87,14 @@ def unwrap(error):
     return error
 
 
+def error_message(error):
+    """Friendly error text. On the public demo, explain quota limits for visitors."""
+    if QUESTION_LIMIT and is_daily_limit(error):
+        return ("This free demo has used up today's AI quota. Please try again tomorrow, "
+                "or see the README on GitHub for screenshots and how to run it yourself.")
+    return friendly_error(error)
+
+
 def show_message(msg):
     """Draw one chat message: text, charts, and (for the agent) how it got there."""
     with st.chat_message(msg["role"]):
@@ -112,6 +125,9 @@ with st.sidebar:
         st.session_state.messages = []
         st.session_state.history = []
         st.rerun()
+    if QUESTION_LIMIT:
+        st.info(f"Public demo on a free API tier: {QUESTION_LIMIT} questions per visit. "
+                f"You've used {st.session_state.asked}.")
     st.caption("Free-tier API: if you see a rate-limit message, wait a minute.")
 
 
@@ -122,10 +138,18 @@ st.caption("Plain-English questions → SQL → answers and charts. Read-only ac
 for msg in st.session_state.messages:
     show_message(msg)
 
-question = st.chat_input("e.g. Which city has the most customers?")
+limit_reached = QUESTION_LIMIT and st.session_state.asked >= QUESTION_LIMIT
+if limit_reached:
+    st.warning("You've reached the demo limit for this visit. Thanks for trying it! "
+               "The full code is on GitHub if you'd like to run it yourself.")
+
+question = st.chat_input("e.g. Which city has the most customers?", disabled=bool(limit_reached))
 question = question or st.session_state.pop("pending", None)
+if limit_reached:
+    question = None  # also ignore sidebar example buttons
 
 if question:
+    st.session_state.asked += 1
     user_msg = {"role": "user", "content": question}
     st.session_state.messages.append(user_msg)
     show_message(user_msg)
@@ -142,7 +166,7 @@ if question:
                 "tool_calls": tool_calls_since(history, start),
             }
         except Exception as e:
-            agent_msg = {"role": "assistant", "content": f"⚠️ {friendly_error(unwrap(e))}"}
+            agent_msg = {"role": "assistant", "content": f"⚠️ {error_message(unwrap(e))}"}
 
     st.session_state.messages.append(agent_msg)
-    show_message(agent_msg)
+    st.rerun()  # redraw the page so the sidebar counter and limit are up to date
