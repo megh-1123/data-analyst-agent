@@ -1,0 +1,68 @@
+{
+  "E1": {
+    "question": "How many customers do we have?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "We have a total of **200** customers registered.",
+    "steps": 2,
+    "seconds": 14.3,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  },
+  "E2": {
+    "question": "How many products are in the catalog?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "There are **10 products** in the catalog.",
+    "steps": 2,
+    "seconds": 18.6,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  },
+  "E3": {
+    "question": "How many orders have been placed in total, across all statuses?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "A total of **1,500 orders** have been placed across all statuses.\n\n**Breakdown by status:**\n- **Delivered:** 1,137\n- **Shipped:** 151\n- **Cancelled:** 130\n- **Returned:** 82",
+    "steps": 3,
+    "seconds": 109.7,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  },
+  "E4": {
+    "question": "What is the most expensive product?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "The most expensive product is the **Smartwatch** (Electronics) priced at **₹5,999**.",
+    "steps": 2,
+    "seconds": 18.6,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  },
+  "E5": {
+    "question": "Which city has the fewest customers?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "**Bengaluru** and **Mumbai** are tied for the fewest customers, with **26 customers** each.",
+    "steps": 2,
+    "seconds": 21.7,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  },
+  "E6": {
+    "question": "How many orders were cancelled?",
+    "level": "easy",
+    "passed": true,
+    "reason": "all expected values found",
+    "answer": "A total of **130** orders were cancelled.",
+    "steps": 2,
+    "seconds": 39.6,
+    "recovered_errors": 0,
+    "model": "gemini-3.7-flash"
+  }
+}
