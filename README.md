@@ -6,6 +6,8 @@ Built with **Gemini**, the **Model Context Protocol (MCP)**, and **Streamlit**.
 
 ![Screenshot of the app](docs/screenshot.png)
 
+![The SQL behind each answer](docs/screenshot-sql.png)
+
 ## What it does
 
 Ask *"Which product category earned the most revenue?"* and the agent:
