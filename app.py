@@ -94,7 +94,7 @@ def show_message(msg):
                 for name, args in msg["tool_calls"]:
                     st.markdown(f"**{name}**")
                     if "sql" in args:
-                        st.code(args["sql"], language="sql")
+                        st.code(args["sql"], language="sql", wrap_lines=True)
                     else:
                         st.json(args)
 
