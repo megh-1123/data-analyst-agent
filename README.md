@@ -1,4 +1,5 @@
 # 📊 Data Analyst Agent
+   **🚀 Live demo:** https://megh-data-agent.streamlit.app/
 
 An AI agent that answers plain-English questions about a sales database by writing
 and running its own SQL, fixing its own mistakes, and drawing charts.
